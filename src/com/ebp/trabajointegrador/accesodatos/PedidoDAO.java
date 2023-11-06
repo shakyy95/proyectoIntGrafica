@@ -155,9 +155,9 @@ public class PedidoDAO {
                 boolean pagado = rs.getBoolean("pagado");
 
 
-                Factura factura = (facturaId != 0) ? new Factura(facturaId,facturaFechaHoraEmision) : null;
+                Factura factura = (facturaId != 0) ? new Factura(facturaId, facturaFechaHoraEmision) : null;
 
-                Pedido pedido = new Pedido(pedidoId, nombreCliente, estadoPedidoId, estadoPedidoNombre, factura,pagado);
+                Pedido pedido = new Pedido(pedidoId, nombreCliente, estadoPedidoId, estadoPedidoNombre, factura, pagado);
                 pedido.setFechaHoraCreacion(fechaHoraCreacion.toLocalDateTime());
 
                 pedidos.add(pedido);
@@ -176,6 +176,40 @@ public class PedidoDAO {
 
         try (PreparedStatement stmt = connection.prepareStatement(query)) {
             stmt.setString(1, estadoCanceladoNombre);
+            stmt.setInt(2, pedido.getId());
+            int rowsAffected = stmt.executeUpdate();
+
+            return rowsAffected > 0;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+    public boolean procesarPedido(Pedido pedido) {
+        String estadoNombre = EstadoPedido.EstadoPedidoEnum.PREPARACION.toString();
+
+        String query = "UPDATE pedido SET estadoPedidoId = (SELECT id FROM estadopedido WHERE nombre = ?) WHERE id = ?";
+
+        try (PreparedStatement stmt = connection.prepareStatement(query)) {
+            stmt.setString(1, estadoNombre);
+            stmt.setInt(2, pedido.getId());
+            int rowsAffected = stmt.executeUpdate();
+
+            return rowsAffected > 0;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+    public boolean despacharPedido(Pedido pedido) {
+        String estadoNombre = EstadoPedido.EstadoPedidoEnum.LISTO_PARA_ENTREGAR.toString();
+
+        String query = "UPDATE pedido SET estadoPedidoId = (SELECT id FROM estadopedido WHERE nombre = ?) WHERE id = ?";
+
+        try (PreparedStatement stmt = connection.prepareStatement(query)) {
+            stmt.setString(1, estadoNombre);
             stmt.setInt(2, pedido.getId());
             int rowsAffected = stmt.executeUpdate();
 
@@ -256,9 +290,55 @@ public class PedidoDAO {
                     boolean pagado = rs.getBoolean("pagado");
 
 
-                    Factura factura = (facturaId != 0) ? new Factura(facturaId,facturaFechaHoraEmision) : null;
+                    Factura factura = (facturaId != 0) ? new Factura(facturaId, facturaFechaHoraEmision) : null;
 
-                    Pedido pedido = new Pedido(pedidoId, nombreCliente, estadoPedidoId, estadoPedidoNombre, factura,pagado);
+                    Pedido pedido = new Pedido(pedidoId, nombreCliente, estadoPedidoId, estadoPedidoNombre, factura, pagado);
+                    pedido.setFechaHoraCreacion(fechaHoraCreacion.toLocalDateTime());
+
+                    pedidos.add(pedido);
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return pedidos;
+    }
+
+    public List<Pedido> obtenerPedidosCocinaAyerYHoy() {
+        List<Pedido> pedidos = new ArrayList<>();
+
+        LocalDateTime ayer = LocalDateTime.now().minusDays(1);
+        LocalDateTime hoy = LocalDateTime.now().withHour(23).withMinute(59).withSecond(59);
+
+        String query = "SELECT " +
+                "p.id AS pedidoId, " +
+                "p.nombreCliente as nombreCliente ,"+
+                "p.fechaHoraCreacion, " +
+                "ep.id AS estadoPedidoId, " +
+                "ep.nombre AS estadoPedidoNombre " +
+                "FROM pedido p " +
+                "INNER JOIN estadopedido ep ON p.estadoPedidoId = ep.id " +
+                "LEFT JOIN factura f ON p.facturaId = f.id " +
+                "WHERE p.fechaHoraCreacion BETWEEN ? AND ? " +
+                "AND ep.nombre = ? || ep.nombre = ? " +
+                "ORDER BY p.id desc";
+
+        try (PreparedStatement stmt = connection.prepareStatement(query)) {
+            stmt.setTimestamp(1, Timestamp.valueOf(ayer));
+            stmt.setTimestamp(2, Timestamp.valueOf(hoy));
+            stmt.setString(3, EstadoPedido.EstadoPedidoEnum.REGISTRADO.name());
+            stmt.setString(4, EstadoPedido.EstadoPedidoEnum.PREPARACION.name());
+
+            try (ResultSet rs = stmt.executeQuery()) {
+                while (rs.next()) {
+                    int pedidoId = rs.getInt("pedidoId");
+                    Timestamp fechaHoraCreacion = rs.getTimestamp("fechaHoraCreacion");
+                    String nombreCliente = rs.getString("nombreCliente");
+                    int estadoPedidoId = rs.getInt("estadoPedidoId");
+                    String estadoPedidoNombre = rs.getString("estadoPedidoNombre");
+
+                    Pedido pedido = new Pedido(pedidoId, nombreCliente, estadoPedidoId, estadoPedidoNombre, null, false);
                     pedido.setFechaHoraCreacion(fechaHoraCreacion.toLocalDateTime());
 
                     pedidos.add(pedido);
@@ -275,10 +355,10 @@ public class PedidoDAO {
         String insertFacturaQuery = "INSERT INTO factura (fechaHoraEmision) VALUES (?)";
         String updatePedidoQuery = "UPDATE pedido SET facturaId = ? WHERE id = ?";
 
-        try (         PreparedStatement insertFacturaStmt = connection.prepareStatement(insertFacturaQuery, Statement.RETURN_GENERATED_KEYS);
+        try (PreparedStatement insertFacturaStmt = connection.prepareStatement(insertFacturaQuery, Statement.RETURN_GENERATED_KEYS);
              PreparedStatement updatePedidoStmt = connection.prepareStatement(updatePedidoQuery)) {
 
-Timestamp fechaFactura = Timestamp.valueOf(LocalDateTime.now());
+            Timestamp fechaFactura = Timestamp.valueOf(LocalDateTime.now());
             // Insertar la nueva factura
             insertFacturaStmt.setTimestamp(1, fechaFactura); // Fecha actual
             insertFacturaStmt.executeUpdate();

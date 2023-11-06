@@ -1,14 +1,14 @@
 package com.ebp.trabajointegrador.modelo;
 
-import java.util.List;
-
 public class VariedadPizza {
-    private  int id;
+    private int id;
     private String nombre;
     private String ingredientes;
-    private  boolean habilitado;
+    private boolean habilitado;
 
-    public VariedadPizza(){}
+    public VariedadPizza() {
+    }
+
     public VariedadPizza(String nombre, String ingredientes) {
         this.nombre = nombre;
         this.ingredientes = ingredientes;

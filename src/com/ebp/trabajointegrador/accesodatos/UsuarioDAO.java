@@ -12,8 +12,6 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.ebp.trabajointegrador.config.DatabaseConnection.obtenerConexionBaseDatos;
-
 public class UsuarioDAO {
     private final Connection conn;
 
@@ -50,7 +48,7 @@ public class UsuarioDAO {
                     String nombreUsuarioDB = resultSet.getString("nombre");
                     int rolIdUsuarioDB = resultSet.getInt("rol_id");
 
-                    return new Usuario(idUsuarioDB,nombreUsuarioDB,rolIdUsuarioDB);
+                    return new Usuario(idUsuarioDB, nombreUsuarioDB, rolIdUsuarioDB);
                 }
             }
         } catch (SQLException e) {
@@ -69,7 +67,7 @@ public class UsuarioDAO {
                     int idRolDB = resultSet.getInt("id");
                     String nombreRolDB = resultSet.getString("nombre");
 
-                    return new Rol(idRolDB,nombreRolDB);
+                    return new Rol(idRolDB, nombreRolDB);
 
                 }
             }
@@ -83,7 +81,7 @@ public class UsuarioDAO {
         List<Permiso> permisos = new ArrayList<>();
 
         String query = "SELECT p.id, p.nombre FROM Permiso p JOIN Permiso_Rol pr ON p.id = pr.permiso_id JOIN Rol r ON r.id = pr.rol_id WHERE r.id = ?";
-        try (             PreparedStatement statement = conn.prepareStatement(query)) {
+        try (PreparedStatement statement = conn.prepareStatement(query)) {
             statement.setInt(1, rolId);
             try (ResultSet resultSet = statement.executeQuery()) {
                 while (resultSet.next()) {

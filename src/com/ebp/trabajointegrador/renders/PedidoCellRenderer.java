@@ -22,7 +22,7 @@ public class PedidoCellRenderer extends DefaultTableCellRenderer {
             } else if (estado.equals("LISTO_PARA_ENTREGAR")) {
                 cellComponent.setBackground(Color.ORANGE);
             } else if (estado.equals("ENTREGADO")) {
-                cellComponent.setBackground(Color.BLUE);
+                cellComponent.setBackground(Color.GREEN);
             } else if (estado.equals("CANCELADO")) {
                 cellComponent.setBackground(Color.GRAY);
             } else {

@@ -1,25 +1,25 @@
 package com.ebp.trabajointegrador.modelo;
 
 public class TipoPizza {
-    private  int id;
+    private int id;
     private String nombre;
     private String descripcion;
 
     private boolean habilitado;
 
-    public TipoPizza(){}
+    public TipoPizza() {
+    }
+
     public TipoPizza(String nombre, String descripcion) {
         this.nombre = nombre;
         this.descripcion = descripcion;
     }
 
-    public int getId()
-    {
+    public int getId() {
         return id;
     }
 
-    public void setId(int id)
-    {
+    public void setId(int id) {
         this.id = id;
     }
 

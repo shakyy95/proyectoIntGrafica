@@ -5,13 +5,15 @@ public class EstadoPedido {
     private EstadoPedidoEnum nombre;
     private String descripcion;
 
-    public EstadoPedido() {}
+    public EstadoPedido() {
+    }
 
-    public EstadoPedido(int id ,EstadoPedidoEnum nombre) {
+    public EstadoPedido(int id, EstadoPedidoEnum nombre) {
         this.id = id;
         this.nombre = nombre;
         this.descripcion = obtenerDescripcionPorNombre(nombre);
     }
+
     public EstadoPedido(EstadoPedidoEnum nombre) {
         this.nombre = nombre;
         this.descripcion = obtenerDescripcionPorNombre(nombre);
@@ -58,7 +60,6 @@ public class EstadoPedido {
                 return "";
         }
     }
-
 
 
     public enum EstadoPedidoEnum {

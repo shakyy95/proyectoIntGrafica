@@ -4,9 +4,9 @@ public class Usuario {
     private int id;
     private String nombre;
     private Rol rol;
-    private  int rolId;
+    private int rolId;
 
-    public Usuario(int id, String nombre,int rolId) {
+    public Usuario(int id, String nombre, int rolId) {
         this.id = id;
         this.nombre = nombre;
         this.rolId = rolId;
@@ -28,9 +28,10 @@ public class Usuario {
         this.nombre = nombre;
     }
 
-    public int getRolId(){
-        return  this.rolId;
+    public int getRolId() {
+        return this.rolId;
     }
+
     public Rol getRol() {
         return rol;
     }

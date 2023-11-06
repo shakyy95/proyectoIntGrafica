@@ -5,17 +5,23 @@ import com.ebp.trabajointegrador.modelo.DetallePedido;
 import com.ebp.trabajointegrador.modelo.Factura;
 import com.ebp.trabajointegrador.modelo.Pedido;
 import com.ebp.trabajointegrador.renders.PedidoCellRenderer;
+import com.ebp.trabajointegrador.reportes.ReporteFactura;
 
 import javax.swing.*;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.table.DefaultTableModel;
-import java.awt.event.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.sql.Connection;
 import java.text.NumberFormat;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
 
 public class VentasForm extends JFrame {
     private JPanel panel;
@@ -33,15 +39,15 @@ public class VentasForm extends JFrame {
     private DefaultTableModel pedidosTableModel;
     private DefaultTableModel detallesPedidoTableModel;
 
-    private Connection connection;
-    private PedidoDAO pedidoDAO;
+    private final PedidoDAO pedidoDAO;
 
     private List<Pedido> pedidos = new ArrayList<>();
 
     private Pedido pedidoSeleccionado;
 
+    private final Timer timer;
+
     public VentasForm(Connection conn) {
-        this.connection = conn;
         this.pedidoDAO = new PedidoDAO(conn);
 
         setTitle("Pizzería - Pedidos");
@@ -100,26 +106,25 @@ public class VentasForm extends JFrame {
             @Override
             public void actionPerformed(ActionEvent e) {
                 if (pedidoSeleccionado != null) {
-                    if(pedidoSeleccionado.getFactura() != null)
-                    {
-                        JOptionPane.showMessageDialog(VentasForm.this, "Muestro la factura.. En desarrollo.", "Factura N°: " + pedidoSeleccionado.getFactura().getId(), JOptionPane.INFORMATION_MESSAGE);
-                    }else
-                    {
+                    if (pedidoSeleccionado.getFactura() != null) {
+                        abrirFactura(pedidoSeleccionado.getFactura(),pedidoSeleccionado);
+                        //JOptionPane.showMessageDialog(VentasForm.this, "Muestro la factura.. En desarrollo.", "Factura N°: " + pedidoSeleccionado.getFactura().getId(), JOptionPane.INFORMATION_MESSAGE);
+                    } else {
                         int confirmacion = JOptionPane.showConfirmDialog(VentasForm.this,
                                 "¿Desea generar la factura para el pedido N° " + pedidoSeleccionado.getId() + " del cliente " + pedidoSeleccionado.getNombreCliente() + "?",
                                 "Confirmar Cancelación",
                                 JOptionPane.YES_NO_OPTION);
 
                         if (confirmacion == JOptionPane.YES_OPTION) {
-                           boolean generada = pedidoDAO.generarFactura(pedidoSeleccionado);
+                            boolean generada = pedidoDAO.generarFactura(pedidoSeleccionado);
                             if (generada) {
                                 int confirmacionAbrir = JOptionPane.showConfirmDialog(VentasForm.this,
                                         "Factura generada con éxito. ¿Desea visualizarla?",
                                         "Factura generada",
                                         JOptionPane.YES_NO_OPTION);
                                 if (confirmacionAbrir == JOptionPane.YES_OPTION) {
-                                    JOptionPane.showMessageDialog(VentasForm.this, "Muestro la factura.. En desarrollo.", "Factura N°:" + pedidoSeleccionado.getFactura().getId(), JOptionPane.INFORMATION_MESSAGE);
-
+                                   // JOptionPane.showMessageDialog(VentasForm.this, "Muestro la factura.. En desarrollo.", "Factura N°:" + pedidoSeleccionado.getFactura().getId(), JOptionPane.INFORMATION_MESSAGE);
+                                    abrirFactura(pedidoSeleccionado.getFactura(),pedidoSeleccionado);
 
                                 }
 
@@ -185,9 +190,27 @@ public class VentasForm extends JFrame {
         btnActualizar.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-               actualizarPedidos();
+                actualizarPedidos();
             }
         });
+
+        timer = new Timer(30000, new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                actualizarPedidos();
+            }
+        });
+
+        addWindowListener(new WindowAdapter() {
+            @Override
+            public void windowClosed(WindowEvent e) {
+                // Detener el temporizador cuando se cierra la ventana
+                timer.stop();
+            }
+        });
+
+        // Inicia el temporizador
+        timer.start();
 
         add(panel);
         setVisible(true);
@@ -277,8 +300,8 @@ public class VentasForm extends JFrame {
             btnEntregar.setEnabled(pedidoSeleccionado.estaListoParaEntregar());
 
 
-           if(pedidoSeleccionado.getFactura() != null) btnFacturar.setText("Mostrar factura");
-           else btnFacturar.setText("Generar factura");
+            if (pedidoSeleccionado.getFactura() != null) btnFacturar.setText("Mostrar factura");
+            else btnFacturar.setText("Generar factura");
 
             List<DetallePedido> detallesPedido = pedidoDAO.obtenerDetallesPedido(pedidoSeleccionado);
 
@@ -311,8 +334,7 @@ public class VentasForm extends JFrame {
         int selectedRow = tablaPedidos.getSelectedRow();
         if (selectedRow >= 0) {
             cargarDetallesPedidoEnTabla(selectedRow);
-        }
-        else {
+        } else {
             btnRegistrarPago.setEnabled(false);
             btnCancelar.setEnabled(false);
             btnEntregar.setEnabled(false);
@@ -326,9 +348,11 @@ public class VentasForm extends JFrame {
         }
     }
 
-    private void abrirFactura(Factura factura)
-    {
-
+    private void abrirFactura(Factura factura, Pedido pedido) {
+        factura.setCliente(pedido.getNombreCliente());
+        factura.agregarDetalles(pedido.getDetallePedido());
+        var reporte = new ReporteFactura(factura);
+        reporte.generarFactura();
     }
 }
 

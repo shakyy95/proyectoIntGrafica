@@ -1,12 +1,14 @@
 package com.ebp.trabajointegrador.modelo;
 
 public class TamanioPizza {
-    private  int id;
+    private int id;
     private String nombre;
     private int cantPorciones;
     private boolean habilitado;
 
-    public TamanioPizza(){}
+    public TamanioPizza() {
+    }
+
     public TamanioPizza(String nombre, int cantPorciones) {
         this.nombre = nombre;
         this.cantPorciones = cantPorciones;

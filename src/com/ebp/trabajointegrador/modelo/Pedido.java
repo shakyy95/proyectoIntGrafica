@@ -1,6 +1,5 @@
 package com.ebp.trabajointegrador.modelo;
 
-import java.sql.Time;
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.util.HashSet;
@@ -17,7 +16,8 @@ public class Pedido {
     private EstadoPedido estadoPedido;
     private Set<DetallePedido> detallesPedidoSet;
 
-    public Pedido(){}
+    public Pedido() {
+    }
 
     public Pedido(String nombreCliente) {
         this.nombreCliente = nombreCliente;
@@ -26,8 +26,7 @@ public class Pedido {
         this.detallesPedidoSet = new HashSet<>();
     }
 
-    public Pedido(int id, String nombreCliente, int estadoPedidoId, String estadoPedidoNombre, Factura factura, boolean pagado)
-    {
+    public Pedido(int id, String nombreCliente, int estadoPedidoId, String estadoPedidoNombre, Factura factura, boolean pagado) {
         this.id = id;
         this.nombreCliente = nombreCliente;
         this.estadoPedido = new EstadoPedido(id, EstadoPedido.EstadoPedidoEnum.valueOf(estadoPedidoNombre));
@@ -90,6 +89,7 @@ public class Pedido {
     public void setDetallesPedidoSet(Set<DetallePedido> detallesPedidoSet) {
         this.detallesPedidoSet = detallesPedidoSet;
     }
+
     public void agregarDetallePedido(DetallePedido detallePedido) {
         detallesPedidoSet.add(detallePedido);
     }
@@ -115,7 +115,7 @@ public class Pedido {
     }
 
     public Factura factura(int numeroFactura, Timestamp fecha) {
-        factura = new Factura(numeroFactura,fecha);
+        factura = new Factura(numeroFactura, fecha);
         for (DetallePedido detalle : detallesPedidoSet) {
             factura.agregarDetallePedido(detalle);
         }
@@ -139,14 +139,12 @@ public class Pedido {
         estadoPedido = estado;
     }
 
-    public  void setPagado(boolean pagado)
-    {
+    public void setPagado(boolean pagado) {
         this.pagado = pagado;
     }
 
-    public boolean getPagado()
-    {
-        return  this.pagado;
+    public boolean getPagado() {
+        return this.pagado;
     }
 
     public void terminar() {
@@ -154,23 +152,23 @@ public class Pedido {
         fechaHoraEntrega = LocalDateTime.now();
     }
 
-    public boolean estaEntregado()
-    {
+    public boolean estaEntregado() {
         return this.estadoPedido.getNombre() == EstadoPedido.EstadoPedidoEnum.ENTREGADO;
     }
 
-    public boolean estaListoParaEntregar()
-    {
+    public boolean estaListoParaEntregar() {
         return this.estadoPedido.getNombre() == EstadoPedido.EstadoPedidoEnum.LISTO_PARA_ENTREGAR;
     }
 
-    public boolean estaCancelado()
-    {
+    public boolean estaCancelado() {
         return this.estadoPedido.getNombre() == EstadoPedido.EstadoPedidoEnum.CANCELADO;
     }
 
-    public boolean estaEnPreparacion()
-    {
+    public boolean estaRegistrado() {
+        return this.estadoPedido.getNombre() == EstadoPedido.EstadoPedidoEnum.REGISTRADO;
+    }
+
+    public boolean estaEnPreparacion() {
         return this.estadoPedido.getNombre() == EstadoPedido.EstadoPedidoEnum.PREPARACION;
     }
 }

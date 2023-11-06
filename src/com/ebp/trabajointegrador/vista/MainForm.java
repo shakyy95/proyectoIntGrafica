@@ -33,6 +33,14 @@ public class MainForm extends JFrame {
                         menuForm.setVisible(true);
                     });
                     break;
+                case "COCINA_PEDIDOS":
+                    SwingUtilities.invokeLater(() -> {
+                        CocinaForm cocinaForm = null;
+                        cocinaForm = new CocinaForm(connection);
+                        cocinaForm.setLocationRelativeTo(MainForm.this);
+                        cocinaForm.setVisible(true);
+                    });
+                    break;
                 case "VENTAS_PEDIDOS":
                     SwingUtilities.invokeLater(() -> {
                         VentasForm ventasForm = null;
@@ -142,19 +150,11 @@ public class MainForm extends JFrame {
             JMenu menu = new JMenu("Cocina");
             menuBar.add(menu);
 
-            if (permisos.stream().anyMatch(permiso -> permiso.getId() == 4)) {
-                JMenuItem menuItem = new JMenuItem("Confirmar pedido");
-                menuItem.setActionCommand("CONFIRMAR_PEDIDO");
+             JMenuItem menuItem = new JMenuItem("Pedidos");
+                menuItem.setActionCommand("COCINA_PEDIDOS");
                 menuItem.addActionListener(menuListener);
                 menu.add(menuItem);
-            }
 
-            if (permisos.stream().anyMatch(permiso -> permiso.getId() == 5)) {
-                JMenuItem menuItem = new JMenuItem("Informar cierre pedido");
-                menuItem.setActionCommand("CERRAR_PEDIDO");
-                menuItem.addActionListener(menuListener);
-                menu.add(menuItem);
-            }
         }
 
         if (permisos.stream().anyMatch(permiso -> permiso.getId() == 6 || permiso.getId() == 7)) {

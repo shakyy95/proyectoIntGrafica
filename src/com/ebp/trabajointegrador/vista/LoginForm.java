@@ -5,7 +5,6 @@ import com.ebp.trabajointegrador.config.SesionUsuario;
 import com.ebp.trabajointegrador.modelo.usuario.Permiso;
 import com.ebp.trabajointegrador.modelo.usuario.Rol;
 import com.ebp.trabajointegrador.modelo.usuario.Usuario;
-import com.sun.tools.javac.Main;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
@@ -25,7 +24,7 @@ public class LoginForm extends JFrame {
     private JPasswordField txtPassword;
     private JButton btnIniciarSesion;
 
-    private  final Connection connection;
+    private final Connection connection;
 
     public LoginForm(Connection conn) throws IOException {
         this.connection = conn;
@@ -93,7 +92,7 @@ public class LoginForm extends JFrame {
 
         SwingUtilities.invokeLater(() -> {
             MainForm mainForm = null;
-            mainForm = new MainForm(myImg,connection);
+            mainForm = new MainForm(myImg, connection);
 
             this.dispose();
             mainForm.setVisible(true);

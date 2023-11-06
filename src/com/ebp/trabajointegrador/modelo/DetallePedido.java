@@ -1,8 +1,5 @@
 package com.ebp.trabajointegrador.modelo;
 
-import java.util.ArrayList;
-import java.util.List;
-
 public class DetallePedido {
     private int id;
     private int cantidad;
@@ -10,7 +7,9 @@ public class DetallePedido {
     private Pizza pizza;
 
     private int pizzaId;
-    public DetallePedido() {}
+
+    public DetallePedido() {
+    }
 
     public DetallePedido(int cantidad, int pizzaId, double precio) {
         this.cantidad = cantidad;
@@ -18,14 +17,12 @@ public class DetallePedido {
         this.pizzaId = pizzaId;
     }
 
-    public DetallePedido(int id,int cantidad, double precio, Pizza pizza) {
+    public DetallePedido(int id, int cantidad, double precio, Pizza pizza) {
         this.id = id;
         this.cantidad = cantidad;
         this.precio = precio;
         this.pizza = pizza;
     }
-
-
 
 
     public int getId() {
@@ -59,15 +56,15 @@ public class DetallePedido {
     public void setPizza(Pizza pizza) {
         this.pizza = pizza;
     }
-    public int getPizzaId()
-    {
+
+    public int getPizzaId() {
         return this.pizzaId;
     }
 
-    public void setPizzaId(int pizzaId)
-    {
+    public void setPizzaId(int pizzaId) {
         this.pizzaId = pizzaId;
     }
+
     public double calcularSubtotal() {
         return precio * cantidad;
     }

@@ -10,7 +10,8 @@ public class Pizza {
     private TamanioPizza tamanioPizza;
     private boolean habilitado;
 
-    public  Pizza(){}
+    public Pizza() {
+    }
 
     public Pizza(int id, String nombre, TipoPizza tipoPizza, VariedadPizza variedadPizza, TamanioPizza tamanioPizza) {
         this.id = id;
@@ -19,6 +20,7 @@ public class Pizza {
         this.variedadPizza = variedadPizza;
         this.tamanioPizza = tamanioPizza;
     }
+
     public Pizza(String nombre, double precio, TipoPizza tipoPizza, VariedadPizza variedadPizza, TamanioPizza tamanioPizza, boolean habilitado) {
         this.nombre = nombre;
         this.precio = precio;
@@ -28,13 +30,11 @@ public class Pizza {
         this.habilitado = habilitado;
     }
 
-    public int getId()
-    {
+    public int getId() {
         return id;
     }
 
-    public void setId(int id)
-    {
+    public void setId(int id) {
         this.id = id;
     }
 
