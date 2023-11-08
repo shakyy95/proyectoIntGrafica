@@ -20,6 +20,7 @@ public class MenuForm extends JFrame {
     private final Connection connection;
     private final PizzaDAO pizzaDAO;
 
+    // Listener para manejar el evento de cierre del formulario de edición/agregación de pizza
     private final WindowAdapter listenerCloseABM = new WindowAdapter() {
         @Override
         public void windowClosed(WindowEvent e) {
@@ -39,6 +40,7 @@ public class MenuForm extends JFrame {
         btnAgregarPizza.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
+                // Abrir el formulario de edición/agregación de pizza (ABMMenu)
                 SwingUtilities.invokeLater(() -> {
                     ABMMenu abmMenu = new ABMMenu(MenuForm.this, conn);
                     abmMenu.setModalityType(Dialog.ModalityType.APPLICATION_MODAL);
@@ -56,6 +58,7 @@ public class MenuForm extends JFrame {
     }
 
     private static DefaultTableModel getDefaultTableModel() {
+        // Configura un modelo de tabla predeterminado con una columna "ID" oculta
         DefaultTableModel model = new DefaultTableModel() {
             @Override
             public boolean isCellEditable(int row, int column) {
@@ -92,7 +95,7 @@ public class MenuForm extends JFrame {
     }
 
     private void createUIComponents() {
-
+        // Configura la tabla de pizzas y agrega un botón "Editar" en las filas
         DefaultTableModel model = getDefaultTableModel();
         tablaPizzas = new JTable(model) {
             @Override
@@ -121,6 +124,7 @@ public class MenuForm extends JFrame {
                     int pizzaId = (int) tablaPizzas.getValueAt(row, 0);
                     Pizza pizza = pizzaDAO.obtenerPizzaPorId(pizzaId);
 
+                    // Abre el formulario de edición/agregación de pizza (ABMMenu) con los datos de la pizza
                     SwingUtilities.invokeLater(() -> {
                         ABMMenu abmMenu = new ABMMenu(MenuForm.this, connection, pizza);
                         abmMenu.setModalityType(Dialog.ModalityType.APPLICATION_MODAL);

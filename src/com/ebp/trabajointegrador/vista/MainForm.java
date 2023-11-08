@@ -15,6 +15,7 @@ import java.util.List;
 public class MainForm extends JFrame {
     private JPanel panel1;
 
+    // Clase interna para manejar eventos del menú
     class MenuListener implements ActionListener {
         private final Connection connection;
 
@@ -25,8 +26,10 @@ public class MainForm extends JFrame {
         @Override
         public void actionPerformed(ActionEvent e) {
 
+            // Manejo de eventos según la acción del menú
             switch (e.getActionCommand()) {
                 case "REGISTRAR_MENU":
+                    // Abrir formulario de Menu
                     SwingUtilities.invokeLater(() -> {
                         MenuForm menuForm = null;
                         menuForm = new MenuForm(connection);
@@ -34,6 +37,7 @@ public class MainForm extends JFrame {
                     });
                     break;
                 case "COCINA_PEDIDOS":
+                    // Abrir formulario de cocina
                     SwingUtilities.invokeLater(() -> {
                         CocinaForm cocinaForm = null;
                         cocinaForm = new CocinaForm(connection);
@@ -42,6 +46,7 @@ public class MainForm extends JFrame {
                     });
                     break;
                 case "VENTAS_PEDIDOS":
+                    // Abrir formulario de ventas
                     SwingUtilities.invokeLater(() -> {
                         VentasForm ventasForm = null;
                         ventasForm = new VentasForm(connection);
@@ -50,6 +55,7 @@ public class MainForm extends JFrame {
                     });
                     break;
                 case "CERRAR_SESION":
+                    // Cerrar la sesión actual
                     int confirm = JOptionPane.showConfirmDialog(
                             MainForm.this,
                             "¿Está seguro que desea cerrar la sesión?",
@@ -58,11 +64,12 @@ public class MainForm extends JFrame {
                     );
 
                     if (confirm == JOptionPane.YES_OPTION) {
+                        // Volver al formulario de inicio de sesión
                         SwingUtilities.invokeLater(() -> {
                             try {
                                 LoginForm loginForm = new LoginForm(connection);
                                 loginForm.setVisible(true);
-                                dispose();
+                                dispose();  // Cerrar la ventana principal
                             } catch (IOException ex) {
                                 throw new RuntimeException(ex);
                             }
@@ -101,6 +108,7 @@ public class MainForm extends JFrame {
             Rol rol = usuarioSesion.getUsuarioSesion().getRol();
             List<Permiso> permisos = rol.getPermisos();
 
+            //Agrego los menus según los permisos del ususario
             agregarMenus(permisos);
             add(panel1);
 
@@ -109,6 +117,7 @@ public class MainForm extends JFrame {
         }
     }
 
+    // Método para agregar elementos de menú en función de los permisos del usuario
     private void agregarMenus(List<Permiso> permisos) {
 
         if (permisos.stream().anyMatch(permiso -> permiso.getId() == 1 || permiso.getId() == 2 || permiso.getId() == 3)) {

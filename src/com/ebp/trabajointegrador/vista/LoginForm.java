@@ -31,6 +31,7 @@ public class LoginForm extends JFrame {
 
         UsuarioDAO usuarioDAO = new UsuarioDAO(conn);
 
+        // Cargar la imagen del icono
         InputStream iconStream = getClass().getResourceAsStream("/com/ebp/trabajointegrador/resources/logo_pizzeria_112_100.png");
         BufferedImage myImg = null;
         if (iconStream != null) {
@@ -38,12 +39,14 @@ public class LoginForm extends JFrame {
             setIconImage(myImg);
         }
 
+        // Configuración de la ventana de inicio de sesión
         setTitle("Pizzeria - Inicio de Sesión");
         setSize(350, 250);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLocationRelativeTo(null);
         setResizable(false);
 
+        // Rellenar el ComboBox con usuarios habilitados
         List<String> usuariosHabilitados = usuarioDAO.obtenerUsuariosHabilitados();
         for (String usuario : usuariosHabilitados) {
             cmbUsuario.addItem(usuario);
@@ -52,8 +55,11 @@ public class LoginForm extends JFrame {
         add(panel1);
 
         BufferedImage finalMyImg = myImg;
+
+        // Manejo del evento del botón "Iniciar Sesión"
         btnIniciarSesion.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
+                // Obtener el nombre de usuario y contraseña
                 String nombreUsuario = Objects.requireNonNull(cmbUsuario.getSelectedItem()).toString();
                 char[] passwordChars = txtPassword.getPassword();
                 String password = new String(passwordChars);
@@ -64,11 +70,12 @@ public class LoginForm extends JFrame {
                     return;
                 }
 
+                // Intentar autenticar al usuario
                 Usuario usuarioSesion = usuarioDAO.autenticarUsuario(nombreUsuario, password);
 
                 if (usuarioSesion != null) {
-
-                    // Realiza la lógica para obtener el rol y permisos desde la base de datos
+                    // Autenticación exitosa
+                    // Obtener el rol y permisos desde la base de datos
                     Rol rol = usuarioDAO.obtenerRolPorId(usuarioSesion.getRolId());
                     List<Permiso> permisos = usuarioDAO.obtenerPermisos(rol.getId());
 
@@ -79,6 +86,7 @@ public class LoginForm extends JFrame {
                     // Almacena la instancia de UsuarioSesion en la sesión
                     SesionUsuario.getInstancia().setUsuarioSesion(usuarioSesion);
 
+                    // Abrir la ventana principal
                     openMainForm(finalMyImg);
                 } else {
                     // Autenticación fallida
@@ -88,14 +96,15 @@ public class LoginForm extends JFrame {
         });
     }
 
+    // Método para abrir la ventana principal
     private void openMainForm(Image myImg) {
 
         SwingUtilities.invokeLater(() -> {
             MainForm mainForm = null;
             mainForm = new MainForm(myImg, connection);
 
-            this.dispose();
-            mainForm.setVisible(true);
+            this.dispose(); // Cerrar la ventana de inicio de sesión actual
+            mainForm.setVisible(true);  // Mostrar la ventana principal
         });
     }
 }

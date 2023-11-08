@@ -38,11 +38,13 @@ public class ABMMenu extends JDialog {
     private PizzaDAO pizzaDAO;
     private int pizzaId = 0;
 
+    //Constructor para agregar pizzas
     public ABMMenu(Frame owner, Connection conn) {
         super(owner, "ABM de Menú", true);
         this.configurarForm(conn, "Agregar pizza");
     }
 
+    //Constructor para editar pizzas
     public ABMMenu(Frame owner, Connection conn, Pizza pizza) {
         super(owner, "ABM de Menú", true);
         this.configurarForm(conn, "Editar pizza");
@@ -60,10 +62,12 @@ public class ABMMenu extends JDialog {
         variedadPizzaDAO = new VariedadPizzaDAO(conn);
         tamanioPizzaDAO = new TamanioPizzaDAO(conn);
 
+        // Obtener variedades, tipos y tamaños de pizzas de la base de datos
         this.obtenerVariedades();
         this.obtenerTipos();
         this.obtenerTamanios();
 
+        // Configurar verificación y filtro de campo de precio
         txtPrecio.setInputVerifier(new DoubleInputVerifier());
         ((AbstractDocument) txtPrecio.getDocument()).setDocumentFilter(new DoubleDocumentFilter());
 
@@ -78,6 +82,7 @@ public class ABMMenu extends JDialog {
     }
 
     private void obtenerVariedades() {
+        // Obtener variedades de pizzas de la base de datos y cargarlas en el ComboBox
         List<VariedadPizza> variedadesPizzas = variedadPizzaDAO.obtenerVariedadesPizzas();
         DefaultComboBoxModel<VariedadPizza> model = new DefaultComboBoxModel<>(variedadesPizzas.toArray(new VariedadPizza[0]));
         cmbVariedad.setModel(model);
@@ -85,6 +90,7 @@ public class ABMMenu extends JDialog {
     }
 
     private void obtenerTipos() {
+        // Obtener tipos de pizzas de la base de datos y cargarlos en el ComboBox
         List<TipoPizza> tiposPizzas = tipoPizzaDAO.obtenerTiposPizzas();
         DefaultComboBoxModel<TipoPizza> model = new DefaultComboBoxModel<>(tiposPizzas.toArray(new TipoPizza[0]));
         cmbTipo.setModel(model);
@@ -92,6 +98,7 @@ public class ABMMenu extends JDialog {
     }
 
     private void obtenerTamanios() {
+        // Obtener tamaños de pizzas de la base de datos y cargarlos en el ComboBox
         List<TamanioPizza> tamanioPizzas = tamanioPizzaDAO.obtenerTamaniosPizzas();
         DefaultComboBoxModel<TamanioPizza> model = new DefaultComboBoxModel<>(tamanioPizzas.toArray(new TamanioPizza[0]));
         cmbTamanio.setModel(model);
