@@ -17,7 +17,6 @@ public class Main {
         //Creamos una conexion a la base de datos que será compartida por toda la app
         Connection conn = DatabaseConnection.obtenerConexionBaseDatos(properties);
 
-
         //Como primera medida abrimos el login
         SwingUtilities.invokeLater(() -> {
             LoginForm loginForm = null;

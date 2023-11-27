@@ -54,6 +54,19 @@ public class MainForm extends JFrame {
                         ventasForm.setVisible(true);
                     });
                     break;
+                case "VER_ESTADISTICAS":
+                    // Abrir formulario de ventas
+                    SwingUtilities.invokeLater(() -> {
+                        EstadisticasForm estadisticasForm = null;
+                        try {
+                            estadisticasForm = new EstadisticasForm(connection);
+                        } catch (IOException ex) {
+                            throw new RuntimeException(ex);
+                        }
+                        estadisticasForm.setLocationRelativeTo(MainForm.this);
+                        estadisticasForm.setVisible(true);
+                    });
+                    break;
                 case "CERRAR_SESION":
                     // Cerrar la sesión actual
                     int confirm = JOptionPane.showConfirmDialog(
