@@ -17,6 +17,8 @@
       </library>
     </orderEntry>
     <orderEntry type="library" name="itextpdf.maven.itextdoc" level="project" />
-    <orderEntry type="library" name="jcommon-1.0.23" level="project" />
+    <orderEntry type="library" name="google.code.gson" level="project" />
+    <orderEntry type="library" name="jfree.jfreechart" level="project" />
+    <orderEntry type="library" name="jfree.jcommon" level="project" />
   </component>
 </module>

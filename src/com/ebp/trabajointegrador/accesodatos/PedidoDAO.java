@@ -17,7 +17,7 @@ public class PedidoDAO {
     }
 
     public boolean insertarPedido(Pedido pedido) {
-        String insertPedidoQuery = "INSERT INTO pedido (fechaHoraCreacion, nombreCliente, estadoPedidoId) VALUES (?, ?, ?)";
+        String insertPedidoQuery = "INSERT INTO pedido (fechaHoraCreacion, nombreCliente, estadoPedidoId, provincia, municipio) VALUES (?, ?, ?, ?, ?)";
         Set<DetallePedido> detallesPedido = pedido.getDetallesPedidoSet();
         int pedidoId = -1;
 
@@ -30,6 +30,8 @@ public class PedidoDAO {
                 stmt.setTimestamp(1, timestamp);
                 stmt.setString(2, pedido.getNombreCliente());
                 stmt.setInt(3, 1);
+                stmt.setString(4, pedido.getProvincia());
+                stmt.setString(5, pedido.getMunicipio());
 
                 int filasAfectadas = stmt.executeUpdate();
 

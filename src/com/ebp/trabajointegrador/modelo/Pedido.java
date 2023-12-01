@@ -15,6 +15,8 @@ public class Pedido {
     private Factura factura;
     private EstadoPedido estadoPedido;
     private Set<DetallePedido> detallesPedidoSet;
+    private String provincia;
+    private String municipio;
 
     public Pedido() {
     }
@@ -146,7 +148,21 @@ public class Pedido {
     public boolean getPagado() {
         return this.pagado;
     }
+    public String getProvincia() {
+        return provincia;
+    }
 
+    public void setProvincia(String provincia) {
+        this.provincia = provincia;
+    }
+
+    public String getMunicipio() {
+        return municipio;
+    }
+
+    public void setMunicipio(String municipio) {
+        this.municipio = municipio;
+    }
     public void terminar() {
         estadoPedido = new EstadoPedido(EstadoPedido.EstadoPedidoEnum.ENTREGADO);
         fechaHoraEntrega = LocalDateTime.now();

@@ -78,6 +78,8 @@ CREATE TABLE `pedido` (
   `facturaId` int(11) DEFAULT NULL,
   `estadoPedidoId` int(11) DEFAULT NULL,
   `pagado` bit(1) DEFAULT b'0',
+  `provincia` varchar(45) NULL,
+  `municipio` varchar(100) NULL,
   PRIMARY KEY (`id`),
   KEY `facturaId` (`facturaId`),
   KEY `estadoPedidoId` (`estadoPedidoId`),

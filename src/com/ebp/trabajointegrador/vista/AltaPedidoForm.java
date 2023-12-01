@@ -1,16 +1,17 @@
 package com.ebp.trabajointegrador.vista;
 
+import com.ebp.trabajointegrador.accesodatos.ApiGeoRef;
 import com.ebp.trabajointegrador.accesodatos.PedidoDAO;
 import com.ebp.trabajointegrador.accesodatos.PizzaDAO;
-import com.ebp.trabajointegrador.modelo.DetallePedido;
-import com.ebp.trabajointegrador.modelo.Pedido;
-import com.ebp.trabajointegrador.modelo.Pizza;
+import com.ebp.trabajointegrador.modelo.*;
 
 import javax.swing.*;
 import javax.swing.table.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
 import java.sql.Connection;
 import java.text.NumberFormat;
 import java.util.ArrayList;
@@ -29,12 +30,14 @@ public class AltaPedidoForm extends JDialog {
     private JTextField txtCliente;
     private JScrollPane scrollPane1;
     private JTextField txtMontoTotal;
+    private JComboBox cmbMunicipios;
+    private JComboBox cmbProvincia;
 
     private double montoTotal = 0.0;
     public boolean exito = false;
 
     private final DefaultTableCellRenderer defaultRenderer = new DefaultTableCellRenderer();
-
+    private final ApiGeoRef apiGeoRef;
 
     public AltaPedidoForm(Frame owner, Connection conn) {
         super(owner, "Alta de Pedido", true);
@@ -42,6 +45,8 @@ public class AltaPedidoForm extends JDialog {
         setMinimumSize(new Dimension(800, 600));
 
         setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
+
+        this.apiGeoRef = new ApiGeoRef();
 
         this.connection = conn;
 
@@ -53,8 +58,9 @@ public class AltaPedidoForm extends JDialog {
 
         agregarPizzasAModel();
 
-
         actualizarFormatoTabla();
+
+        buscarProvincias();
 
         btnAceptar.addActionListener(new ActionListener() {
             @Override
@@ -63,6 +69,19 @@ public class AltaPedidoForm extends JDialog {
                     agregarPedido();
                 } else {
                     JOptionPane.showMessageDialog(AltaPedidoForm.this, "Por favor, ingresa un cliente y agrega al menos un producto.", "Error", JOptionPane.ERROR_MESSAGE);
+                }
+            }
+        });
+
+        cmbProvincia.addItemListener(new ItemListener() {
+            @Override
+            public void itemStateChanged(ItemEvent e) {
+                if (e.getStateChange() == ItemEvent.SELECTED) {
+                    JComboBox comboBox = (JComboBox) e.getSource();
+                    Provincia selectedProvincia = (Provincia) comboBox.getSelectedItem();
+
+                    // Cargar los municipios correspondientes a la provincia seleccionada
+                    buscarMunicipios(selectedProvincia.getId());
                 }
             }
         });
@@ -256,6 +275,8 @@ public class AltaPedidoForm extends JDialog {
                 pedido.agregarDetallePedido(detalle);
             }
         }
+        pedido.setProvincia(cmbProvincia.getSelectedItem().toString());
+        pedido.setMunicipio(cmbMunicipios.getSelectedItem().toString());
 
         PedidoDAO pedidoDAO = new PedidoDAO(connection);
 
@@ -268,6 +289,21 @@ public class AltaPedidoForm extends JDialog {
         JOptionPane.showMessageDialog(AltaPedidoForm.this, "Pedido registrado con éxito.", "Éxito", JOptionPane.INFORMATION_MESSAGE);
         exito = true;
         this.dispose();
+    }
+
+    private void buscarProvincias() {
+        Provincia[] provincias = this.apiGeoRef.obtenerProvincias();
+        cmbProvincia.removeAllItems();
+
+        for (Provincia provincia : provincias) cmbProvincia.addItem(provincia);
+        this.buscarMunicipios(provincias[0].getId());
+    }
+
+    private void buscarMunicipios(String provinciaId) {
+        Municipio[] municipios = this.apiGeoRef.obtenerMunicipios(provinciaId);
+        cmbMunicipios.removeAllItems();
+
+        for (Municipio municipio : municipios) cmbMunicipios.addItem(municipio);
     }
 
 }
